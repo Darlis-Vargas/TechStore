@@ -1,0 +1,9 @@
+bin/
+obj/
+.vs/
+.vscode/
+*.user
+*.suo
+TestResults/
+__pycache__/
+# Los CSV/MD de resultados SÍ se suben (son evidencia de las pruebas)

@@ -1,0 +1,25 @@
+Escenario,Prueba,Tecnologia,Variante,PromedioMs,MinMs,MaxMs,Mediciones
+1,"Leer 1.000 productos","ADO.NET","DataReader",248.769,174.343,347.374,4
+1,"Leer 1.000 productos","EF Core","AsNoTracking",432.909,295.206,549.597,4
+1,"Leer 1.000 productos","EF Core","Con tracking",630.880,547.663,755.298,4
+1,"Leer 10.000 productos","ADO.NET","DataReader",1186.909,689.109,1688.351,4
+1,"Leer 10.000 productos","EF Core","AsNoTracking",1611.267,1261.201,2148.309,4
+1,"Leer 10.000 productos","EF Core","Con tracking",1571.493,1059.396,2103.402,4
+1,"Leer 50.000 productos","ADO.NET","DataReader",3422.278,2901.932,3957.612,4
+1,"Leer 50.000 productos","EF Core","AsNoTracking",5602.947,5225.780,6119.285,4
+1,"Leer 50.000 productos","EF Core","Con tracking",5649.739,4195.490,6341.202,4
+2,"1,000 búsquedas por Id aleatorio","ADO.NET","",229.626,222.255,238.395,4
+2,"1,000 búsquedas por Id aleatorio","EF Core","AsNoTracking",801.993,799.055,805.443,4
+3,"100 búsquedas ""Dell Pro"" + categoría","ADO.NET","SQL dinámico",3185.957,3111.747,3329.349,4
+3,"100 búsquedas ""Dell Pro"" + categoría","EF Core","LINQ dinámico",7504.226,3888.258,17766.817,4
+4,"Insertar 1,000 productos uno a uno","ADO.NET","INSERT x1000",776.018,753.220,811.855,4
+4,"Insertar 1,000 productos uno a uno","EF Core","SaveChanges x1000",1515.109,1507.828,1528.613,4
+4,"Insertar 1,000 productos en bloque","ADO.NET","SqlBulkCopy",60.078,55.434,63.279,4
+4,"Insertar 1,000 productos en bloque","EF Core","AddRange+SaveChanges",142.905,113.126,174.870,4
+5,"AjustarPrecios +5 % (categoría completa)","ADO.NET","UPDATE ... WHERE",45.109,42.713,51.134,4
+5,"AjustarPrecios +5 % (categoría completa)","EF Core","Entidades+SaveChanges",603.164,538.032,728.625,4
+5,"AjustarPrecios +5 % (categoría completa)","EF Core","ExecuteUpdate",77.576,71.180,80.972,4
+6,"Reporte ventas por categoría","ADO.NET","JOIN + GROUP BY",22.695,20.791,26.917,4
+6,"Reporte ventas por categoría","EF Core","LINQ GroupBy",25.258,22.369,28.730,4
+7,"100 ventas de 3 productos","ADO.NET","SqlTransaction",304.775,284.231,318.130,4
+7,"100 ventas de 3 productos","EF Core","BeginTransaction",471.451,434.704,516.171,4

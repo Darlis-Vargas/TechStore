@@ -1,0 +1,84 @@
+diff --git a/database/CambioMarca.sql b/database/CambioMarca.sql
+new file mode 100644
+index 0000000..3c08f50
+--- /dev/null
++++ b/database/CambioMarca.sql
+@@ -0,0 +1,7 @@
++/* Parte F: cambio de esquema para la implementación ADO.NET (TechStoreDB).
++   En EF Core este cambio lo genera la migración AgregarMarca. */
++USE TechStoreDB;
++GO
++IF COL_LENGTH('dbo.Producto', 'Marca') IS NULL
++    ALTER TABLE dbo.Producto ADD Marca NVARCHAR(50) NULL;
++GO
+diff --git a/src/TechStore.AdoNet/ProductoRepositorioAdo.cs b/src/TechStore.AdoNet/ProductoRepositorioAdo.cs
+index a73366a..94b6f1d 100644
+--- a/src/TechStore.AdoNet/ProductoRepositorioAdo.cs
++++ b/src/TechStore.AdoNet/ProductoRepositorioAdo.cs
+@@ -20,7 +20,7 @@ public class ProductoRepositorioAdo : IProductoRepositorio
+ 
+     // Columnas en un orden fijo: Mapear() lee por posición (0..5), que es lo más rápido.
+     private const string SelectBase =
+-        "SELECT IdProducto, Codigo, Nombre, Precio, Stock, IdCategoria FROM dbo.Producto";
++        "SELECT IdProducto, Codigo, Nombre, Precio, Stock, IdCategoria, Marca FROM dbo.Producto";
+ 
+     public string? UltimoMensaje { get; private set; }
+ 
+@@ -36,7 +36,7 @@ public class ProductoRepositorioAdo : IProductoRepositorio
+ 
+     public List<Producto> ObtenerPrimeros(int cantidad) =>
+         Consultar(
+-            "SELECT TOP (@cantidad) IdProducto, Codigo, Nombre, Precio, Stock, IdCategoria " +
++            "SELECT TOP (@cantidad) IdProducto, Codigo, Nombre, Precio, Stock, IdCategoria, Marca " +
+             "FROM dbo.Producto ORDER BY IdProducto;",
+             cmd => cmd.Parameters.Add("@cantidad", SqlDbType.Int).Value = cantidad);
+ 
+@@ -81,8 +81,8 @@ public class ProductoRepositorioAdo : IProductoRepositorio
+     public int Agregar(Producto producto)
+     {
+         const string sql =
+-            "INSERT INTO dbo.Producto (Codigo, Nombre, Precio, Stock, IdCategoria) " +
+-            "VALUES (@codigo, @nombre, @precio, @stock, @idCategoria); " +
++            "INSERT INTO dbo.Producto (Codigo, Nombre, Precio, Stock, IdCategoria, Marca) " +
++            "VALUES (@codigo, @nombre, @precio, @stock, @idCategoria, @marca); " +
+             "SELECT CAST(SCOPE_IDENTITY() AS INT);";
+ 
+         using var cn = new SqlConnection(_cadenaConexion);
+@@ -107,9 +107,10 @@ public class ProductoRepositorioAdo : IProductoRepositorio
+         tabla.Columns.Add("Precio", typeof(decimal));
+         tabla.Columns.Add("Stock", typeof(int));
+         tabla.Columns.Add("IdCategoria", typeof(int));
++        tabla.Columns.Add("Marca", typeof(string));
+ 
+         foreach (var p in productos)
+-            tabla.Rows.Add(p.Codigo, p.Nombre, p.Precio, p.Stock, p.IdCategoria);
++            tabla.Rows.Add(p.Codigo, p.Nombre, p.Precio, p.Stock, p.IdCategoria, (object?)p.Marca ?? DBNull.Value);
+ 
+         using var cn = new SqlConnection(_cadenaConexion);
+         cn.Open();
+@@ -129,7 +130,7 @@ public class ProductoRepositorioAdo : IProductoRepositorio
+     {
+         const string sql =
+             "UPDATE dbo.Producto SET Codigo = @codigo, Nombre = @nombre, Precio = @precio, " +
+-            "Stock = @stock, IdCategoria = @idCategoria WHERE IdProducto = @id;";
++            "Stock = @stock, IdCategoria = @idCategoria, Marca = @marca WHERE IdProducto = @id;";
+ 
+         using var cn = new SqlConnection(_cadenaConexion);
+         using var cmd = new SqlCommand(sql, cn);
+@@ -269,7 +270,8 @@ ORDER BY TotalVendido DESC;";
+         Nombre = dr.GetString(2),
+         Precio = dr.GetDecimal(3),
+         Stock = dr.GetInt32(4),
+-        IdCategoria = dr.GetInt32(5)
++        IdCategoria = dr.GetInt32(5),
++        Marca = dr.IsDBNull(6) ? null : dr.GetString(6)
+     };
+ 
+     private static void AgregarParametrosProducto(SqlCommand cmd, Producto p)
+@@ -282,5 +284,6 @@ ORDER BY TotalVendido DESC;";
+         precio.Value = p.Precio;
+         cmd.Parameters.Add("@stock", SqlDbType.Int).Value = p.Stock;
+         cmd.Parameters.Add("@idCategoria", SqlDbType.Int).Value = p.IdCategoria;
++        cmd.Parameters.Add("@marca", SqlDbType.NVarChar, 50).Value = (object?)p.Marca ?? DBNull.Value;
+     }
+ }

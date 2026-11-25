@@ -1,0 +1,12 @@
+diff --git a/src/TechStore.Core/Entidades/Producto.cs b/src/TechStore.Core/Entidades/Producto.cs
+index 38096e1..81db1d7 100644
+--- a/src/TechStore.Core/Entidades/Producto.cs
++++ b/src/TechStore.Core/Entidades/Producto.cs
+@@ -8,6 +8,7 @@ public class Producto
+     public decimal Precio { get; set; }
+     public int Stock { get; set; }
+     public int IdCategoria { get; set; }
++    public string? Marca { get; set; }
+ 
+     // Navegación (la usa EF Core; ADO.NET la ignora)
+     public Categoria? Categoria { get; set; }
